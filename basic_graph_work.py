@@ -9,7 +9,8 @@ Created on Fri Feb 22 09:30:02 2019
 # libraries
 import pandas as pd
 import numpy as np
-import networkx as nx
+import networkx as nx #networkX version 2.2
+from networkx.algorithms.approximation import min_weighted_dominating_set
 import matplotlib.pyplot as plt
  
 # Build a dataframe with 4 connections
@@ -20,12 +21,12 @@ df = pd.read_csv('ca_sandia_auth.csv', header=0);
 df = df.sort_values(by = ['from', 'to'])
 df.reset_index(drop=True, inplace=True)
  
-# Build your graph. Note that we use the DiGraph function to create the graph!
+# Build your graph. Note that we use the DiGraph function to create a directed graph.
 #G=nx.from_pandas_dataframe(df_SandiaAuth, 'from', 'to', create_using=nx.DiGraph() )
 
 # Build your graph
-G=nx.from_pandas_dataframe(df, 'from', 'to')
- 
+G = nx.from_pandas_edgelist(df, 'from', 'to') 
+
 # Plot it
 plt.figure(3,figsize=(12,12)) 
 #nx.draw(G, with_labels=True, node_size=5, node_color="skyblue", alpha=0.5, linewidths=40)
@@ -37,8 +38,7 @@ plt.title("Sandia Authorship Network")
 
 plt.show()
 
-
-#%% Graph Heuristics
+#%% Graph Node Heuristics
 #https://networkx.github.io/documentation/stable/reference/algorithms/index.html
 
 heuristics = ['betweeness', 'closeness', 'degree', 'min dominant']
@@ -46,13 +46,25 @@ heuristics = ['betweeness', 'closeness', 'degree', 'min dominant']
 bc = nx.betweenness_centrality(G);
 cc = nx.closeness_centrality(G);
 dc = nx.degree_centrality(G);
-mwds = nx.min_weighted_dominating_set(G)
+mwds = list(min_weighted_dominating_set(G, weight=None))
+dct = dict(zip(np.arange(0,df.values.max(),1), [0]*df.values.max()))
 
-df_Heuristic = pd.DataFrame(data=None, index=np.arange(0,df.values.max(),1), columns=heuristics)
+for m in mwds:
+    dct[m] = 1;
+mwds = dct;
 
-df_Heuristic['betweeness'] = pd.DataFrame.from_dict(bc, orient='index')
-df_Heuristic['closeness'] = pd.DataFrame.from_dict(cc, orient='index')
-df_Heuristic['degree'] = pd.DataFrame.from_dict(dc, orient='index')
-df_Heuristic['min dominant'] = pd.DataFrame.from_dict(mwds  , orient='index')
+#networkx.algorithms.approximation.dominating_set.min_weighted_dominating_set
 
+df_nodes = pd.DataFrame(data=None, index=np.arange(0,df.values.max(),1), columns=heuristics)
+
+df_nodes['betweeness'] = pd.DataFrame.from_dict(bc, orient='index')
+df_nodes['closeness'] = pd.DataFrame.from_dict(cc, orient='index')
+df_nodes['degree'] = pd.DataFrame.from_dict(dc, orient='index')
+df_nodes['min dominant'] = pd.DataFrame.from_dict(mwds  , orient='index')
+
+#%% Graph Edge Heuristics
+
+heuristics = ['betweeness', 'closeness', 'degree', 'min dominant']
+
+df_edges = df;
 
