@@ -145,7 +145,7 @@ df_inf = pd.DataFrame(columns=['from', 'to', 'edges', 'willingness', 'influenced
 n = 3
 seeds = random.sample(set(np.arange(0,len(df),1)), n)
 seeds.sort()
-seeds = [30, 33, 40, 60];
+seeds = [30, 33];
 #print('Seeds: ', seeds)
 
 #lambda x: True if x % 2 == 0 else False
@@ -154,6 +154,39 @@ steps = 0;
 
 df, df_inf, steps = glom(seeds, steps)
 
+#%% Plot Influence Network
 
+# Build your graph
+G = nx.from_pandas_edgelist(df, 'from', 'to', create_using=nx.DiGraph()) 
+G.nodes()
+
+#df_color = df['influenced']
+carac = pd.DataFrame({ 'ID':np.arange(0,124,1), 'myvalue':df['influenced'] })
+
+# Here is the tricky part: I need to reorder carac to assign the good color to each node
+carac= carac.set_index('ID')
+carac=carac.reindex(G.nodes())
+ 
+# And I need to transform my categorical column in a numerical value: group1->1, group2->2...
+carac['myvalue']=pd.Categorical(carac['myvalue'])
+carac['myvalue'].cat.codes
+ 
+# Plot it
+plt.figure(3,figsize=(8,8)) 
+pos = nx.spring_layout(G,k=0.20,iterations=50)
+nx.draw(G, pos, with_labels=True, font_size=8, width=df['edges'], node_color=carac['myvalue'].cat.codes, cmap='Blues')
+#plt.cm.Set2)
+
+plt.title("Sandia Authorship Network")
+plt.show()
     
-    
+#%%
+
+viridis = plt.get_cmap('viridis', 256)
+newcolors = viridis(np.linspace(0, 1, 256))
+pink = np.array([248/256, 24/256, 148/256, 1])
+newcolors[:25, :] = pink
+newcmp = plt.colors.ListedColormap(newcolors)
+
+
+
