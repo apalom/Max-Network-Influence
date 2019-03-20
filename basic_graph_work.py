@@ -154,6 +154,9 @@ steps = 0;
 
 df, df_inf, steps = glom(seeds, steps)
 
+# ** Need to remove duplicate "selection" (i.e. FROM node has 10 or 1 multiple times)
+# ** Nodes ought to be named by "from" not index
+
 #%% Plot Influence Network
 
 # Build your graph
@@ -174,19 +177,11 @@ carac['myvalue'].cat.codes
 # Plot it
 plt.figure(3,figsize=(8,8)) 
 pos = nx.spring_layout(G,k=0.20,iterations=50)
-nx.draw(G, pos, with_labels=True, font_size=8, width=df['edges'], node_color=carac['myvalue'].cat.codes, cmap='Blues')
+nx.draw(G, pos, with_labels=True, font_size=8, width=df['edges'], node_color=carac['myvalue'].cat.codes, cmap='binary')
 #plt.cm.Set2)
 
 plt.title("Sandia Authorship Network")
 plt.show()
     
-#%%
-
-viridis = plt.get_cmap('viridis', 256)
-newcolors = viridis(np.linspace(0, 1, 256))
-pink = np.array([248/256, 24/256, 148/256, 1])
-newcolors[:25, :] = pink
-newcmp = plt.colors.ListedColormap(newcolors)
-
 
 
