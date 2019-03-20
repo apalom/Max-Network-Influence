@@ -84,37 +84,50 @@ def glom(seeds, steps):
     #df['influenced'] = df['from'].apply(lambda x: 10 if x == v else 0)
     #df['influenced'].at[df['from'].iloc[v]] = 10;      
     
-    for v in seeds:
+    #for v in seeds:
+    while len(seeds) > 0:
+        v = seeds[0]
         i = 0;
         df_seed = df[df['from'] == v]
-        print('\n', df_seed)
-    
-        for idx, row in df_seed.iterrows():
-            rnd = random.random()
-            print(rnd, df_seed['willingness'].loc[idx])
-            
-            if rnd < df_seed['willingness'].loc[idx]:
-                print('--- Success')
                 
-                to_inf = df_seed['to'].iloc[i];
-                seeds.append(to_inf) #add 'TO' vertex to seeds
-                df['influenced'].at[to_inf] = 1
-                
-                i += 1;
-            else:
-                print('--- Failure')
-            
-            steps += 1; #count attempts to influence a vertex
-            print('** ', steps, ' **')
+        #print('\n', df_seed)
+        print('Seeds: ', seeds)
+        print('Current Seed: ', v)
         
+        if len(df_seed) > 0:
+        
+            for idx, row in df_seed.iterrows():
+                rnd = random.random()
+                #print(rnd, df_seed['willingness'].loc[idx])
+                
+                if rnd < df_seed['willingness'].loc[idx]:
+                    
+                    to_inf = df_seed['to'].iloc[i];
+                    seeds.append(to_inf) #add 'TO' vertex to seeds
+                    df['influenced'].at[to_inf] = 1
+                    
+                    i += 1;                
+                    print('--- Success ---', v, to_inf)
+                    print('+ Append: ', seeds)
+                    
+                else:
+                    print('--- Failure ---', v)
+                
+                steps += 1; #count attempts to influence a vertex
+                print('\n** ', steps, ' **')
+            
         seeds.remove(v)
+        print('- Remove: ', seeds)
+        
+        #print(seeds)
     
-    df_inf = df[df['influenced'] > 0]
+    df_inf = df[df['influenced'] > 0]  
+    
     
     # RECURSE if there are uninfluenced vertices
-    if np.any(df['influenced'] == 0):
-        glom(seeds, steps)   
-        
+#    if np.any(df['influenced'] == 0):
+#        if steps < 5:
+#            return glom(seeds, steps)       
     
     return df, df_inf, steps
      
@@ -126,11 +139,14 @@ import random
 df['willingness'] = df['willingness'].apply(lambda x: random.random())
 df['influenced'] = np.zeros((len(df),1))
 
+df_inf = pd.DataFrame(columns=['from', 'to', 'edges', 'willingness', 'influenced'])
+
 # Assign Seed Vertices 
 n = 3
 seeds = random.sample(set(np.arange(0,len(df),1)), n)
+seeds.sort()
 seeds = [30, 33, 40, 60];
-print('Seeds: ', seeds)
+#print('Seeds: ', seeds)
 
 #lambda x: True if x % 2 == 0 else False
 steps = 0;
