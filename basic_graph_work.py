@@ -19,6 +19,7 @@ import matplotlib.pyplot as plt
 # Load Network Data
 df = pd.read_csv('ca_sandia_auth.csv', header=0); #ca_sandia_auth.csv is directed
 df = df.sort_values(by = ['from', 'to'])
+df = pd.DataFrame(df, columns=['from', 'to', 'edges', 'willingness', 'influenced'])
 df.reset_index(drop=True, inplace=True)
  
 # Build your graph. Note that we use the DiGraph function to create a directed graph.
@@ -65,8 +66,8 @@ out_dc = nx.out_degree_centrality(G);
 #mwds = dct;
 
 #networkx.algorithms.approximation.dominating_set.min_weighted_dominating_set
-
-df_nodes = pd.DataFrame(data=None, index=np.arange(0,df.values.max(),1), columns=heuristics)
+max_nodes = np.max([df['from'].values.max(), df['to'].values.max()]);
+df_nodes = pd.DataFrame(data=None, index=np.arange(0,max_nodes,1), columns=heuristics)
 
 df_nodes['betweeness_cent'] = pd.DataFrame.from_dict(bc, orient='index')
 df_nodes['closeness_cent'] = pd.DataFrame.from_dict(cc, orient='index')
@@ -75,8 +76,40 @@ df_nodes['in_degree_cent'] = pd.DataFrame.from_dict(in_dc, orient='index')
 df_nodes['out_degree_cent'] = pd.DataFrame.from_dict(out_dc, orient='index')
 #df_nodes['min dominant'] = pd.DataFrame.from_dict(mwds  , orient='index')
 
-#%% Seed Nodes
+#%% Agglomerate Nodes by Influence
 
+def glom(seeds):    
+    
+    df['influenced'] = np.where(df['from'].isin(seeds), 10, 0)
+    #df['influenced'] = df['from'].apply(lambda x: 10 if x == v else 0)
+    #df['influenced'].at[df['from'].iloc[v]] = 10;      
+    
+    for v in seeds:
+        i = 0;
+        df_seed = df[df['from'] == v]
+        print('\n', df_seed)
+    
+        for idx, row in df_seed.iterrows():
+            rnd = random.random()
+            print(rnd, df_seed['willingness'].loc[idx])
+            
+            if rnd < df_seed['willingness'].loc[idx]:
+                print('--- Success')
+                
+                to_inf = df_seed['to'].iloc[i];
+                seeds.append(to_inf) #add 'TO' vertex to seeds
+                df['influenced'].at[to_inf] = 1
+                
+                i += 1;
+            else:
+                print('--- Failure')
+        
+    df_inf = df[df['influenced'] > 0]
+
+    return df, df_inf
+     
+#%% Seed Nodes
+            
 import random
 
 # Assign likelihood of adoption for all vertices
@@ -86,28 +119,13 @@ df['influenced'] = np.zeros((len(df),1))
 # Assign Seed Vertices 
 n = 3
 seeds = random.sample(set(np.arange(0,len(df),1)), n)
-#seeds = [37, 41];
+seeds = [30, 33, 40];
 print('Seeds: ', seeds)
 
-for v in seeds:
-    i = 0;
-    df['influenced'].at[v] = 10;
-    df_seed = df[df['from'] == v]
-    print('\n', df_seed)
-    
-    for idx, row in df_seed.iterrows():
-        rnd = random.random()
-        print(rnd, df_seed['willingness'].loc[idx])
-        
-        if rnd < df_seed['willingness'].loc[idx]:
-            print('--- Success')
-            
-            to_inf = df_seed['to'].iloc[i];
-            df['influenced'].at[to_inf] = 1
+#lambda x: True if x % 2 == 0 else False
 
-            i += 1;
-        else:
-            print('--- Failure')
-         
+df, df_inf = glom(seeds)
+
+
     
     
