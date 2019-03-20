@@ -81,11 +81,33 @@ import random
 
 # Assign likelihood of adoption for all vertices
 df['willingness'] = df['willingness'].apply(lambda x: random.random())
+df['influenced'] = np.zeros((len(df),1))
 
 # Assign Seed Vertices 
-n = 1
+n = 3
 seeds = random.sample(set(np.arange(0,len(df),1)), n)
+#seeds = [37, 41];
 print('Seeds: ', seeds)
 
 for v in seeds:
-    print(v)
+    i = 0;
+    df['influenced'].at[v] = 10;
+    df_seed = df[df['from'] == v]
+    print('\n', df_seed)
+    
+    for idx, row in df_seed.iterrows():
+        rnd = random.random()
+        print(rnd, df_seed['willingness'].loc[idx])
+        
+        if rnd < df_seed['willingness'].loc[idx]:
+            print('--- Success')
+            
+            to_inf = df_seed['to'].iloc[i];
+            df['influenced'].at[to_inf] = 1
+
+            i += 1;
+        else:
+            print('--- Failure')
+         
+    
+    
