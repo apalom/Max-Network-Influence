@@ -78,7 +78,7 @@ df_nodes['out_degree_cent'] = pd.DataFrame.from_dict(out_dc, orient='index')
 
 #%% Agglomerate Nodes by Influence
 
-def glom(seeds):    
+def glom(seeds, steps):    
     
     df['influenced'] = np.where(df['from'].isin(seeds), 10, 0)
     #df['influenced'] = df['from'].apply(lambda x: 10 if x == v else 0)
@@ -103,10 +103,20 @@ def glom(seeds):
                 i += 1;
             else:
                 print('--- Failure')
+            
+            steps += 1; #count attempts to influence a vertex
+            print('** ', steps, ' **')
         
+        seeds.remove(v)
+    
     df_inf = df[df['influenced'] > 0]
-
-    return df, df_inf
+    
+    # RECURSE if there are uninfluenced vertices
+    if np.any(df['influenced'] == 0):
+        glom(seeds, steps)   
+        
+    
+    return df, df_inf, steps
      
 #%% Seed Nodes
             
@@ -119,12 +129,14 @@ df['influenced'] = np.zeros((len(df),1))
 # Assign Seed Vertices 
 n = 3
 seeds = random.sample(set(np.arange(0,len(df),1)), n)
-seeds = [30, 33, 40];
+seeds = [30, 33, 40, 60];
 print('Seeds: ', seeds)
 
 #lambda x: True if x % 2 == 0 else False
+steps = 0;
 
-df, df_inf = glom(seeds)
+
+df, df_inf, steps = glom(seeds, steps)
 
 
     
