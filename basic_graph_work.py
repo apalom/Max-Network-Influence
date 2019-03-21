@@ -17,7 +17,8 @@ import matplotlib.pyplot as plt
 # https://python-graph-gallery.com/320-basic-network-from-pandas-data-frame/
 
 # Load Network Data
-df = pd.read_csv('ca_sandia_auth.csv', header=0); #ca_sandia_auth.csv is directed
+#df = pd.read_csv('ca_sandia_auth.csv', header=0); #ca_sandia_auth.csv is directed
+df = pd.read_csv('sample_graph_short.csv', header=0); 
 df = df.sort_values(by = ['from', 'to'])
 df = pd.DataFrame(df, columns=['from', 'to', 'edges', 'willingness', 'influenced'])
 df.reset_index(drop=True, inplace=True)
@@ -86,6 +87,7 @@ def glom(seeds, steps):
     
     #for v in seeds:
     while len(seeds) > 0:
+        #seeds = list(set(seeds))
         v = seeds[0]
         i = 0;
         df_seed = df[df['from'] == v]
@@ -97,13 +99,14 @@ def glom(seeds, steps):
         if len(df_seed) > 0:
         
             for idx, row in df_seed.iterrows():
-                rnd = random.random()
+                threshold = 0.5
                 #print(rnd, df_seed['willingness'].loc[idx])
                 
-                if rnd < df_seed['willingness'].loc[idx]:
+                if threshold < df_seed['willingness'].loc[idx]:
                     
                     to_inf = df_seed['to'].iloc[i];
                     seeds.append(to_inf) #add 'TO' vertex to seeds
+                    seeds = list(set(seeds))
                     df['influenced'].at[to_inf] = 1
                     
                     i += 1;                
@@ -114,7 +117,7 @@ def glom(seeds, steps):
                     print('--- Failure ---', v)
                 
                 steps += 1; #count attempts to influence a vertex
-                print('\n** ', steps, ' **')
+                print('\n** STEP ', steps, ' **')
             
         seeds.remove(v)
         print('- Remove: ', seeds)
@@ -143,9 +146,10 @@ df_inf = pd.DataFrame(columns=['from', 'to', 'edges', 'willingness', 'influenced
 
 # Assign Seed Vertices 
 n = 3
-seeds = random.sample(set(np.arange(0,len(df),1)), n)
-seeds.sort()
-seeds = [30, 33];
+seeds = random.sample(set(np.arange(0,np.max(df['from']),1)), n)
+
+
+#seeds = [30, 33];
 #print('Seeds: ', seeds)
 
 #lambda x: True if x % 2 == 0 else False
@@ -163,8 +167,16 @@ df, df_inf, steps = glom(seeds, steps)
 G = nx.from_pandas_edgelist(df, 'from', 'to', create_using=nx.DiGraph()) 
 G.nodes()
 
+from_nodes = list(set(df['from']));
+inf = []
+for n in from_nodes:
+    inf_node = np.max(df[df['from'] == n]['influenced'])
+    inf.append(inf_node)
+    
+
 #df_color = df['influenced']
-carac = pd.DataFrame({ 'ID':np.arange(0,124,1), 'myvalue':df['influenced'] })
+#carac = pd.DataFrame({ 'ID':np.arange(0,len(df),1), 'myvalue':df['influenced'] })
+carac = pd.DataFrame({ 'ID':list(set(df['from'])), 'myvalue': inf })
 
 # Here is the tricky part: I need to reorder carac to assign the good color to each node
 carac= carac.set_index('ID')
@@ -175,13 +187,11 @@ carac['myvalue']=pd.Categorical(carac['myvalue'])
 carac['myvalue'].cat.codes
  
 # Plot it
-plt.figure(3,figsize=(8,8)) 
-pos = nx.spring_layout(G,k=0.20,iterations=50)
-nx.draw(G, pos, with_labels=True, font_size=8, width=df['edges'], node_color=carac['myvalue'].cat.codes, cmap='binary')
-#plt.cm.Set2)
+plt.figure(3,figsize=(6,6)) 
+#plt.figure(3,figsize=(4,4)) 
+pos = nx.circular_layout(G)#,k=0.10,iterations=20)
+#pos = nx.fruchterman_reingold_layout(G)
+nx.draw(G, pos, with_labels=True, font_size=8, width=df['edges'], node_color=carac['myvalue'].cat.codes, cmap='Blues', alpha=0.80)
 
 plt.title("Sandia Authorship Network")
 plt.show()
-    
-
-
