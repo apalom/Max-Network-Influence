@@ -176,15 +176,15 @@ for n in from_nodes:
 
 #df_color = df['influenced']
 #carac = pd.DataFrame({ 'ID':np.arange(0,len(df),1), 'myvalue':df['influenced'] })
-carac = pd.DataFrame({ 'ID':list(set(df['from'])), 'myvalue': inf })
+df_nodes = pd.DataFrame({ 'node':list(set(df['from'])), 'influence': inf })
 
 # Here is the tricky part: I need to reorder carac to assign the good color to each node
-carac= carac.set_index('ID')
-carac=carac.reindex(G.nodes())
+df_nodes= df_nodes.set_index('node')
+df_nodes=df_nodes.reindex(G.nodes())
  
 # And I need to transform my categorical column in a numerical value: group1->1, group2->2...
-carac['myvalue']=pd.Categorical(carac['myvalue'])
-carac['myvalue'].cat.codes
+df_nodes['influence']=pd.Categorical(df_nodes['influence'])
+df_nodes['influence'].cat.codes
  
 # Plot it
 plt.figure(3,figsize=(6,6)) 
