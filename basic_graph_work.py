@@ -176,22 +176,22 @@ for n in from_nodes:
 
 #df_color = df['influenced']
 #carac = pd.DataFrame({ 'ID':np.arange(0,len(df),1), 'myvalue':df['influenced'] })
-df_nodes = pd.DataFrame({ 'node':list(set(df['from'])), 'influence': inf })
+df_nodesIn = pd.DataFrame({ 'node':list(set(df['from'])), 'influence': inf })
 
 # Here is the tricky part: I need to reorder carac to assign the good color to each node
-df_nodes= df_nodes.set_index('node')
-df_nodes=df_nodes.reindex(G.nodes())
+df_nodesIn = df_nodesIn.set_index('node')
+df_nodesIn = df_nodesIn.reindex(G.nodes())
  
 # And I need to transform my categorical column in a numerical value: group1->1, group2->2...
-df_nodes['influence']=pd.Categorical(df_nodes['influence'])
-df_nodes['influence'].cat.codes
+df_nodesIn['influence']=pd.Categorical(df_nodes['influence'])
+df_nodesIn['influence'].cat.codes
  
 # Plot it
 plt.figure(3,figsize=(6,6)) 
 #plt.figure(3,figsize=(4,4)) 
 pos = nx.circular_layout(G)#,k=0.10,iterations=20)
 #pos = nx.fruchterman_reingold_layout(G)
-nx.draw(G, pos, with_labels=True, font_size=8, width=df['edges'], node_color=df_nodes['influence'].cat.codes, cmap='Blues', alpha=0.80)
+nx.draw(G, pos, with_labels=True, font_size=8, width=df['edges'], node_color=df_nodesIn['influence'].cat.codes, cmap='Blues', alpha=0.80)
 
 plt.title("Sandia Authorship Network")
 plt.show()
