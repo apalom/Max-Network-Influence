@@ -191,7 +191,7 @@ plt.figure(3,figsize=(6,6))
 #plt.figure(3,figsize=(4,4)) 
 pos = nx.circular_layout(G)#,k=0.10,iterations=20)
 #pos = nx.fruchterman_reingold_layout(G)
-nx.draw(G, pos, with_labels=True, font_size=8, width=df['edges'], node_color=carac['myvalue'].cat.codes, cmap='Blues', alpha=0.80)
+nx.draw(G, pos, with_labels=True, font_size=8, width=df['edges'], node_color=df_nodes['influence'].cat.codes, cmap='Blues', alpha=0.80)
 
 plt.title("Sandia Authorship Network")
 plt.show()
