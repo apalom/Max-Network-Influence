@@ -155,7 +155,6 @@ seeds = random.sample(set(np.arange(0,np.max(df['from']),1)), n)
 #lambda x: True if x % 2 == 0 else False
 steps = 0;
 
-
 df, df_inf, steps = glom(seeds, steps)
 
 # ** Need to remove duplicate "selection" (i.e. FROM node has 10 or 1 multiple times)
