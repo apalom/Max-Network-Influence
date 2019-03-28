@@ -68,13 +68,13 @@ out_dc = nx.out_degree_centrality(G);
 
 #networkx.algorithms.approximation.dominating_set.min_weighted_dominating_set
 max_nodes = np.max([df['from'].values.max(), df['to'].values.max()]);
-df_nodes = pd.DataFrame(data=None, index=np.arange(0,max_nodes,1), columns=heuristics)
+df_nodeStats = pd.DataFrame(data=None, index=np.arange(0,max_nodes,1), columns=heuristics)
 
-df_nodes['betweeness_cent'] = pd.DataFrame.from_dict(bc, orient='index')
-df_nodes['closeness_cent'] = pd.DataFrame.from_dict(cc, orient='index')
-df_nodes['degree_cent'] = pd.DataFrame.from_dict(dc, orient='index')
-df_nodes['in_degree_cent'] = pd.DataFrame.from_dict(in_dc, orient='index')
-df_nodes['out_degree_cent'] = pd.DataFrame.from_dict(out_dc, orient='index')
+df_nodeStats['betweeness_cent'] = pd.DataFrame.from_dict(bc, orient='index')
+df_nodeStats['closeness_cent'] = pd.DataFrame.from_dict(cc, orient='index')
+df_nodeStats['degree_cent'] = pd.DataFrame.from_dict(dc, orient='index')
+df_nodeStats['in_degree_cent'] = pd.DataFrame.from_dict(in_dc, orient='index')
+df_nodeStats['out_degree_cent'] = pd.DataFrame.from_dict(out_dc, orient='index')
 #df_nodes['min dominant'] = pd.DataFrame.from_dict(mwds  , orient='index')
 
 #%% Agglomerate Nodes by Influence
@@ -183,7 +183,7 @@ df_nodesIn = df_nodesIn.set_index('node')
 df_nodesIn = df_nodesIn.reindex(G.nodes())
  
 # And I need to transform my categorical column in a numerical value: group1->1, group2->2...
-df_nodesIn['influence']=pd.Categorical(df_nodes['influence'])
+df_nodesIn['influence']=pd.Categorical(df_nodesIn['influence'])
 df_nodesIn['influence'].cat.codes
  
 # Plot it
