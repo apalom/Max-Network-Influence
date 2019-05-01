@@ -41,24 +41,29 @@ def cascade(seeds, edgelist):
         print('Current Seed: ', v)
         
         if len(df_seed) > 0:
-        
-            for idx, row in df_seed.iterrows():
-                # 50% probability of influence threshold
-                threshold = 0.5
+            
+            threshold = 0.5
                 
-                if df_seed['willingness'].loc[idx] > threshold:
-                    
-                    to_inf = df_seed['to'].iloc[i];
-                    seeds.append(to_inf) #add 'TO' vertex to seeds
-                    seeds = list(set(seeds))
-                    df['influenced'].at[to_inf] = 1
-                    
-                    i += 1;                
-                    print('--- Success ---', v, to_inf)
-                    print('+ Append: ', seeds)
-                    
-                else:
-                    print('--- Failure ---', v)
+            df['influenced'] = np.where(df_seed['willingness'] > threshold, 1, 0)
+            seeds.append(df_seed['willingness'] > threshold)
+            
+#            for idx, row in df_seed.iterrows():
+#                # 50% probability of influence threshold
+#                threshold = 0.5
+#                
+#                if df_seed['willingness'].loc[idx] > threshold:
+#                    
+#                    to_inf = df_seed['to'].iloc[i];
+#                    seeds.append(to_inf) #add 'TO' vertex to seeds
+#                    seeds = list(set(seeds))
+#                    df['influenced'].at[to_inf] = 1
+#                    
+#                    i += 1;                
+#                    print('--- Success ---', v, to_inf)
+#                    print('+ Append: ', seeds)
+#                    
+#                else:
+#                    print('--- Failure ---', v)
                 
                 steps += 1; #count attempts to influence a vertex
                 print('\n** STEP ', steps, ' **')

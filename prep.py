@@ -28,7 +28,7 @@ from cascade import cascade
 import random
 
 # Assign Random Seed Vertices 
-n = 4
+n = 5
 seeds = random.sample(list(set(df['from'])), n)
 #seeds = init_seeds;
 
