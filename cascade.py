@@ -6,19 +6,27 @@ Created on Thu Mar 28 16:39:07 2019
 """
 
 def cascade(seeds, edgelist):
+    
     '''
     seeds: array of indices representing selected seed nodes
     edgelist: dataframe of columns ['from', 'to', 'edges', 'willingness', 'influenced'] 
         
     '''
     
+    # Import Lbraries
+    import pandas as pd
+    import numpy as np
+    
     # Rename 'edgelist' to dataframe
-    df = edgelist
+    df = edgelist;
+    
+    # Handle edgelist unweighted networks with uniform weights
+    
     
     # Assign "influenced" values of 10 to seeded nodes
     df['influenced'] = np.where(df['from'].isin(seeds), 10, 0)
     
-        while len(seeds) > 0:
+    while len(seeds) > 0:
         #seeds = list(set(seeds))
         v = seeds[0]
         i = 0;
