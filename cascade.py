@@ -8,7 +8,7 @@ Created on Thu Mar 28 16:39:07 2019
 def cascade(seeds, edgelist):
     
     '''
-    seeds: array of indices representing selected seed nodes
+    seeds: list of indices representing selected seed nodes
     edgelist: dataframe of columns ['from', 'to', 'edges', 'willingness', 'influenced'] 
         
     '''
@@ -16,15 +16,19 @@ def cascade(seeds, edgelist):
     # Import Lbraries
     import pandas as pd
     import numpy as np
+    import random
     
     # Rename 'edgelist' to dataframe
     df = edgelist;
     
     # Handle edgelist unweighted networks with uniform weights
-    
-    
+    # Assign likelihood of adoption for all vertices
+    df['willingness'] = df['willingness'].apply(lambda x: random.random())
+    df['influenced'] = np.zeros((len(df),1))
+        
     # Assign "influenced" values of 10 to seeded nodes
     df['influenced'] = np.where(df['from'].isin(seeds), 10, 0)
+    steps = 0;
     
     while len(seeds) > 0:
         #seeds = list(set(seeds))
@@ -42,7 +46,7 @@ def cascade(seeds, edgelist):
                 # 50% probability of influence threshold
                 threshold = 0.5
                 
-                if threshold < df_seed['willingness'].loc[idx]:
+                if df_seed['willingness'].loc[idx] > threshold:
                     
                     to_inf = df_seed['to'].iloc[i];
                     seeds.append(to_inf) #add 'TO' vertex to seeds
