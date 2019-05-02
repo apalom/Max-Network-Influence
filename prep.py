@@ -44,6 +44,28 @@ df_Short, df_inf, steps = cascade(seeds, df)
 elapsedMain = timeit.default_timer() - timeMain
 print('Main time: {0:.4f} sec'.format(elapsedMain))
 
+
+#%% Launch IM Cascade Model
+
+from cascade2 import IC_model
+import random
+import timeit
+
+# start timer 
+timeMain = timeit.default_timer() 
+
+p = 0.5
+
+
+
+nodes_inf = IC_model(G, a, p)
+
+
+# timeit statement
+elapsedMain = timeit.default_timer() - timeMain
+print('Main time: {0:.4f} sec'.format(elapsedMain))
+
+
 #%% Launch IM Cascade Model
    
 # Import packages
