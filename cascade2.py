@@ -11,6 +11,10 @@ Created on Thu May  2 12:15:03 2019
 #B is the set of activated nodes in each iteration
 def IC_model(G, a, p):
 
+    # Import Libraries
+    import random
+    import networkx
+    
     A=set(a)
     #print A
     B=set(a)
@@ -34,4 +38,5 @@ def IC_model(G, a, p):
         A|=B
         #print len(A)
         #print A
-    return len(A)
+    
+    return list(A), len(A)

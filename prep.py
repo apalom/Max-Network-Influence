@@ -23,28 +23,6 @@ df.reset_index(drop=True, inplace=True)
 
 G = nx.from_pandas_edgelist(df, 'from', 'to', create_using=nx.DiGraph()) 
 
-#%% Launch Alex Cascade Model
-
-from cascade import cascade
-import random
-import timeit
-
-# start timer 
-timeMain = timeit.default_timer() 
-
-# Assign Random Seed Vertices 
-n = 5
-seeds = random.sample(list(set(df['from'])), n)
-#seeds = init_seeds;
-
-# Run Cascade Model
-df_Short, df_inf, steps = cascade(seeds, df)
-
-# timeit statement
-elapsedMain = timeit.default_timer() - timeMain
-print('Main time: {0:.4f} sec'.format(elapsedMain))
-
-
 #%% Launch IM Cascade Model
 
 from cascade2 import IC_model
@@ -54,39 +32,30 @@ import timeit
 # start timer 
 timeMain = timeit.default_timer() 
 
-p = 0.5
-
-
-
-nodes_inf = IC_model(G, a, p)
-
-
-# timeit statement
-elapsedMain = timeit.default_timer() - timeMain
-print('Main time: {0:.4f} sec'.format(elapsedMain))
-
-
-#%% Launch IM Cascade Model
-   
-# Import packages
-import matplotlib.pyplot as plt
-from random import uniform, seed
-import numpy as np
-import time
-from jgraph import * 
-from IMcascade import IC   
-import timeit
-
-# start timer 
-timeMain = timeit.default_timer()     
+# Influence Threshold
+p = 0.5;
 
 # Assign Random Seed Vertices 
-n = 5
-seeds = random.sample(list(set(df['from'])), n)    
-   
-spread = IC(G,seeds,p=0.5,mc=1000)
- 
+#n = 2
+#seeds = random.sample(list(set(df['from'])), n)
+seeds = [40, 36, 84, 76, 59, 58, 53, 33, 30, 79]
+
+nodes, influenced = IC_model(G, seeds, p)
+nodes_inf = list(set(nodes)-set(seeds));
+
+spread = len(nodes_inf)/len(G.nodes());
+
+df['influenced'] = np.where(df['from'].isin(seeds), 10, np.where(df['from'].isin(nodes_inf), 1, 0))
+
 # timeit statement
 elapsedMain = timeit.default_timer() - timeMain
 print('Main time: {0:.4f} sec'.format(elapsedMain))
-    
+
+# print results
+print('Num Seeds: ', len(seeds), '| Seeds: ', seeds, '| Influenced: ', len(nodes_inf), '| Spread: ', spread)
+
+#%% Plot
+
+from plot_network import plotG
+
+plotG(df, 'Slashdot0902')
