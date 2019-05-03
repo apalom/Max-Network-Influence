@@ -17,8 +17,8 @@ import matplotlib.pyplot as plt
 # https://python-graph-gallery.com/320-basic-network-from-pandas-data-frame/
 
 # Load Network Data
-#df = pd.read_csv('ca_sandia_auth.csv', header=0); #ca_sandia_auth.csv is directed
-df = pd.read_csv('sample_graph_short.csv', header=0); 
+df = pd.read_csv('ca_sandia_auth.csv', header=0); #ca_sandia_auth.csv is directed
+#df = pd.read_csv('sample_graph_short.csv', header=0); 
 df = df.sort_values(by = ['from', 'to'])
 df = pd.DataFrame(df, columns=['from', 'to', 'edges', 'willingness', 'influenced'])
 df.reset_index(drop=True, inplace=True)
@@ -30,13 +30,15 @@ df.reset_index(drop=True, inplace=True)
 G = nx.from_pandas_edgelist(df, 'from', 'to', create_using=nx.DiGraph()) 
 
 # Plot it
-plt.figure(3,figsize=(8,8)) 
+plt.figure(3,figsize=(6,6)) 
 #nx.draw(G, with_labels=True, node_size=5, node_color="skyblue", alpha=0.5, linewidths=40)
 #nx.draw(G, with_labels=True, node_size=1500, node_color="skyblue", node_shape="o", alpha=0.5, linewidths=4, font_size=25, font_color="grey", font_weight="bold", width=2, edge_color="grey")
 #nx.draw(G, with_labels=True, width=2, node_color="skyblue", style="solid")
 #nx.draw(G, with_labels=True, width=2, node_color='skyblue', edge_color=df_SandiaAuth['edges'], edge_cmap=plt.cm.Blues)
-nx.draw(G, with_labels=True, width=df['edges'],  node_color="skyblue")
-plt.title("Sandia Authorship Network")
+pos = nx.circular_layout(G)
+nx.draw(G, pos, with_labels=True, width=df['edges'],  node_color="lightgrey")
+
+plt.title("Sandia Co-Authorship Network")
 
 plt.show()
 

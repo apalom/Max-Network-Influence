@@ -109,7 +109,7 @@ def degree_discount_nodes(k, G, p):
     else:
         n_degree = G.degree
 
-    n = len(G)
+    n = len(G)+1
     most_inf = []
     dd = [0 for i in range(n)]
     t = [0 for i in range(n)]
@@ -140,7 +140,7 @@ def generalized_degree_discount(k, G, p):
     else:
         n_degree = G.degree
 
-    n = len(G)
+    n = len(G)+1
     most_inf = []
     dd = [0 for i in range(n)]
     t = [0 for i in range(n)]
@@ -208,9 +208,10 @@ def IC_model(G, a, p):
 
 if __name__ =='__main__':
     fh = open("./Slashdot0902.txt", "rb")
+    #fh = open("./ca_sandia_auth.csv", "rb")
     G = nx.read_edgelist(fh, create_using=nx.DiGraph(), nodetype=int, data=False)
 
-    seed_sizes = {10, 20, 30, 40, 50}
+    seed_sizes = {10, 20}#, 30, 40, 50}
     p = 0.01
 
     for k in seed_sizes:

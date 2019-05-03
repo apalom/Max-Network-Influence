@@ -33,7 +33,7 @@ import timeit
 p = 0.5;
 
 # Assign Random Seed Vertices 
-n = 10
+n = 20
 #seeds = random.sample(list(set(df['from'])), n)
 #seeds = [27, 57, 54, 53, 37, 47, 78, 71, 67, 8, 38, 61, 86, 20, 45, 66, 18, 44, 65, 79]
 
@@ -54,12 +54,14 @@ maxSpread = 0;
 #seeds = degree_discount_nodes(n, G, p)
 
 # Generalized Degree Discount
-seeds = generalized_degree_discount(k, G, p)
+#seeds = generalized_degree_discount(k, G, p)
+
+#seeds= [71, 36, 38, 65, 69, 78, 52, 18, 60, 50]
 
 for trial in range(500):
 
     # Assign Random Seed Vertices 
-    #seeds = random.sample(list(set(df['from'])), n)
+    seeds = random.sample(list(set(df['from'])), n)
         
     # start timer 
     timeMain = timeit.default_timer() 
@@ -80,16 +82,15 @@ for trial in range(500):
         print('Num Seeds: ', len(seeds), '| Seeds: ', seeds, '| Influenced: ', len(nodes_inf), '| Spread: ', spread)
 
 
-#df['influenced'] = np.where(df['from'].isin(seeds), 10, np.where(df['from'].isin(nodes_inf), 1, 0))
+df['influenced'] = np.where(df['from'].isin(seeds), 10, np.where(df['from'].isin(nodes_inf), 1, 0))
 
 #%% Plot
 
 from plot_network import plotG
 
-plotG(df, 'Slashdot0902')
+plotG(df, 'Sandia Co-Authorship Network')
 
 #%%
 
 from heuristic import *
 
-seeds = distance_central_nodes(n, G)

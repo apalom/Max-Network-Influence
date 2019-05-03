@@ -41,10 +41,10 @@ def plotG(df, name):
     # Plot it
     plt.figure(3,figsize=(6,6)) 
     #plt.figure(3,figsize=(4,4)) 
-    pos = nx.circular_layout(G)#,k=0.10,iterations=20)
+    pos = nx.spring_layout(G)#,k=0.10,iterations=20)
     #pos = nx.fruchterman_reingold_layout(G)
-    nx.draw(G, pos, with_labels=True, font_size=12, font_color = 'w',width=df['edges'], node_color=df_nodesIn['influence'].cat.codes, cmap='Blues', alpha=0.99)
-    
+    drawG = nx.draw(G, pos, with_labels=True, font_size=12, font_color = 'w',width=df['edges'], node_color=df_nodesIn['influence'].cat.codes, cmap='Blues', alpha=0.99)
+        
     plt.title(name)
     plt.show()
     
