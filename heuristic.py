@@ -59,33 +59,23 @@ def high_degree_nodes(k, G):
 
 # Closeness Centrality
 def distance_central_nodes(k, G):
+#    most_inf = []
+#    V = nx.closeness_centrality(G)
+#    N = [t[1] for t in V]
+#
+#    for i in range(1, k + 1):
+#        most_inf.append(N[i])
+    import heapq, operator
+    from operator import itemgetter
+    
     most_inf = []
     V = nx.closeness_centrality(G)
-    N = [t[1] for t in V]
+    Vk = heapq.nlargest(k, V.items(), key=itemgetter(1))
+    most_inf = [t[0] for t in Vk]
+    V = sorted(V.items(), key=operator.itemgetter(1), reverse=True)
+    
 
-    for i in range(1, k + 1):
-        most_inf.append(N[i])
-    '''
-    n = len(G)
-    dist = [0 for i in range(n)]
-    for v in G.nodes():
-        sum_v = 0
-        for w in G.nodes():
-            try:
-                l_w = nx.shortest_path_length(G, v, w)
-            except nx.NetworkXNoPath:
-                l_w = 0
-            sum_v = sum_v + l_w
-            if sum_v != 0:
-                dist[v] = ((n-1) / sum_v, v)
-            else:
-                dist[v] = 0
-    dist.sort()
-    N = [t[1] for t in dist]
 
-    for i in range(1, k + 1):
-        most_inf.append(N[i])
-    '''
     return most_inf
 
 
@@ -139,6 +129,7 @@ def degree_discount_nodes(k, G, p):
         for u in G.neighbors(v_i):
             t[u] = t[u] + 1
             dd[u] = d[u] - 2 * t[u] - (d[u] - t[u])*t[u]*p
+            
     return most_inf
 
 
